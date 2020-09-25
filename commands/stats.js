@@ -1,5 +1,5 @@
 const { Message, MessageEmbed } = require('discord.js');
-const { owner_id } = require('./../config.json');
+const { owner_id } = require('../config.json');
 
 module.exports = {
     name: 'stats',
@@ -12,7 +12,7 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle('Mateoox600 Crazy Bot')
             .setFooter(`Bot creator: ${botOwner.tag}`, botOwner.displayAvatarURL())
-            .addField('General Stats', `Guilds: ${commandEvent.client.guilds.size}`);
+            .addField('General Stats', `Guilds: ${commandEvent.client.guilds}`);
         commandEvent.channel.send(embed);
     }
 }

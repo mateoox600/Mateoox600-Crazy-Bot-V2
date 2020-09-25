@@ -20,7 +20,7 @@ module.exports = {
      */
     log: function(type, message){
         const dateNow = new Date();
-        const dateNowText = '[' + dateNow.getDate() + '/' + (dateNow.getMonth()+1) + '/' + dateNow.getFullYear() + '] [' + dateNow.getHours() + ':' + dateNow.getMinutes() + ':' + dateNow.getSeconds() + '] ';
+        const dateNowText = '[' + dateNow.getDate() + '/' + (dateNow.getMonth()+1) + '/' + dateNow.getFullYear() + '] [' + dateNow.getHours() + ':' + dateNow.getMinutes() + ':' + (dateNow.getSeconds()<10?'0'+dateNow.getSeconds():dateNow.getSeconds()) + '] ';
         console.log(dateNowText + type.message + message);
     }
 }
