@@ -8,7 +8,7 @@ const {token, owner_id} = require('./config.json');
 // Creating the client
 const bot = new discord.Client();
 
-// Data init
+// Data var init
 const guilds = new Map();
 /**
  * @param {any} guildId
@@ -16,11 +16,11 @@ const guilds = new Map();
 function saveGuild(guildId){
     fs.writeFile(`data/guilds/${guildId}.json`, JSON.stringify(guilds.get(guildId)), (err) =>{if (err) logger.log(logger.logType.ERROR, err.message)});
 }
-module.exports = {guilds, saveGuild};
 
 // Registering commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const commands = new Map();
+module.exports = {guilds, saveGuild, commands};
 commandFiles.forEach(commandFile => {
     const command = require(`./commands/${commandFile}`);
     var commandName = command.name != null ? command.name : 'NONE'
@@ -64,6 +64,9 @@ bot.on('message', msg=>{
 });
 
 bot.on('ready', () => {
+    // Data loading
+
+    // Guild Data
     // @ts-ignore
     bot.guilds.cache.forEach((guild) => {
         var guildData
@@ -77,6 +80,9 @@ bot.on('ready', () => {
         }
         guilds.set(guild.id, guildData);
     });
+
+    // TODO Users Data
+
     logger.log(logger.logType.INFO, 'Ready');
 });
 
