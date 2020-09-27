@@ -4,6 +4,8 @@ const discord = require('discord.js');
 const logger = require('./logger.js');
 
 const {token, owner_id} = require('./config.json');
+const {casings} = require('./utils/printer/component/casing.js')
+const {printers} = require('./utils/printer/component/printer.js')
 
 // Creating the client
 const bot = new discord.Client();
@@ -17,10 +19,50 @@ function saveGuild(guildId){
     fs.writeFile(`data/guilds/${guildId}.json`, JSON.stringify(guilds.get(guildId)), (err) =>{if (err) logger.log(logger.logType.ERROR, err.message)});
 }
 
+const userFiles = fs.readdirSync('./data/users').filter(file => file.endsWith('.json'));
+const users = new Map();
+userFiles.forEach(userFile => {
+    const userData = require(`./data/users/${userFile}`);
+    Object.keys(casings).forEach(key => {
+        if(!userData.component.casing.hasOwnProperty(key)){
+            userData.component.casing[key] = {
+                number: 0
+            };
+        }
+    });
+    Object.keys(printers).forEach(key => {
+        if(!userData.component.printer.hasOwnProperty(key)){
+            userData.component.printer[key] = {
+                number: 0
+            };
+        }
+    });
+    users.set(userFile.slice(0, -5), userData);
+});
+setInterval(() => {
+    users.forEach(user => {
+        user.rack.printer.forEach(printer => {
+            if(!(printer.money+printer.gain > printer.maxStorage)){
+                printer.money+=printer.gain;
+            }
+            saveUser(user.id)
+        });
+    });
+}, 10000);
+/**
+ * @param {any} userId
+ */
+function saveUser(userId){
+    if(users.has(userId)) {
+        fs.writeFile(`data/users/${userId}.json`, JSON.stringify(users.get(userId)), (err) =>{if (err) logger.log(logger.logType.ERROR, err.message)});
+    }
+    return users.has(userId);
+}
+
 // Registering commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const commands = new Map();
-module.exports = {guilds, saveGuild, commands};
+module.exports = {guilds, saveGuild, users, saveUser, commands};
 commandFiles.forEach(commandFile => {
     const command = require(`./commands/${commandFile}`);
     var commandName = command.name != null ? command.name : 'NONE'
@@ -69,7 +111,7 @@ bot.on('ready', () => {
     // Guild Data
     // @ts-ignore
     bot.guilds.cache.forEach((guild) => {
-        var guildData
+        var guildData;
         if(fs.existsSync(`./data/guilds/${guild.id}.json`)) {
             guildData = require(`./data/guilds/${guild.id}.json`);
         } else {
@@ -80,6 +122,30 @@ bot.on('ready', () => {
         }
         guilds.set(guild.id, guildData);
     });
+    // User Data
+    /*bot.users.cache.forEach((user) => {
+        var userData;
+        if(fs.existsSync(`./data/users/${user.id}.json`)){
+            userData = require(`./data/users/${user.id}.json`);
+        }else{
+            userData = {
+                "id": "",
+                "rack": {
+                    "level": 1,
+                    "printer": {
+                        "1": {
+                            "name": "Base Printer",
+                            "maxStockage": 1000,
+                            "money": 0,
+                            "level": 1
+                        }
+                    }
+                }
+            };
+            fs.writeFile(`data/users/${user.id}.json`, JSON.stringify(userData), (err) =>{if (err) logger.log(logger.logType.ERROR, err.message)});
+        }
+        users.set(user.id, userData);
+    });*/
 
     // TODO Users Data
 
