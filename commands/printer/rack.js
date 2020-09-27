@@ -1,5 +1,5 @@
 const { Message, MessageEmbed } = require("discord.js");
-const {users, saveUser} = require('../main.js');
+const {users, saveUser} = require('../../main.js');
 
 module.exports = {
     name: 'rack',
@@ -15,11 +15,11 @@ module.exports = {
             const embed = new MessageEmbed().setTitle('Rack').setColor(commandEvent.member.roles.highest.color).addField('Level', userData.rack.level);
             var printerId = 0;
             userData.rack.printer.forEach(printer => {
-                embed.addField(`**Printer ${printerId+1}**`, `**Name**: ${printer.name} \n**Money**: ${printer.money}/${printer.maxStorage} \n**Level**: ${printer.level} \n**Money Per 10Seconds**: ${printer.gain}`, true);
+                embed.addField(`**Printer ${printerId+1}**`, `**Name**: ${printer.name} \n**Money**: ${printer.money}/${printer.maxStorage} \n**Level**: ${printer.level} \n**Money per 10s**: ${printer.gain}`, true);
                 printerId++;
             });
             const fields = embed.fields.length;
-            for (let i = 0; i < userData.rack.level-1+2-fields-1; i++) {
+            for (let i = 0; i < userData.rack.level-1+2-fields; i++) {
                 embed.addField(`**Printer ${printerId+i+1}**`, 'Empty', true);
             }
             commandEvent.channel.send(embed);

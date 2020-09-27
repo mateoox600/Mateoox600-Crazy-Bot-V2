@@ -60,11 +60,23 @@ function saveUser(userId){
 }
 
 // Registering commands
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = []
+getCommandFiles('./commands');
+function getCommandFiles(dir){
+    const files = fs.readdirSync(dir);
+    files.forEach(file => {
+        if(file.endsWith('.js')){
+            commandFiles.push(`${dir}/${file}`);
+        }else{
+            getCommandFiles(`${dir}/${file}`)
+        }
+    });
+}
+//const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 const commands = new Map();
 module.exports = {guilds, saveGuild, users, saveUser, commands};
 commandFiles.forEach(commandFile => {
-    const command = require(`./commands/${commandFile}`);
+    const command = require(commandFile);
     var commandName = command.name != null ? command.name : 'NONE'
     var commandDescription = command.description != null ? command.description : 'NONE';
     var commandOwerOnly = command.ownerOnly != null ? command.ownerOnly : false;

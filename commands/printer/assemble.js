@@ -1,8 +1,8 @@
-const { Message } = require('discord.js');
-const {users, saveUser} = require('../main.js');
-const {casings} = require('../utils/printer/component/casing.js')
-const {printers} = require('../utils/printer/component/printer.js')
-const printerUtils = require('../utils/printer/printerUtils.js');
+const { Message, MessageEmbed } = require('discord.js');
+const {users, saveUser} = require('../../main.js');
+const {casings} = require('../../utils/printer/component/casing.js')
+const {printers} = require('../../utils/printer/component/printer.js')
+const printerUtils = require('../../utils/printer/printerUtils.js');
 
 module.exports = {
     name: 'assemble',
@@ -37,7 +37,7 @@ module.exports = {
                         user.component.casing[args[2]].number--;
                         user.component.printer[args[3]].number--;
                         user.rack.printer.push(assembledPrinter);
-                        commandEvent.reply(`You assembled a ${assembledPrinter.name}`);
+                        commandEvent.reply(new MessageEmbed().setTitle('Assembler').addField(assembledPrinter.name, `Storage: ${assembledPrinter.maxStorage} \nGain per 10s: ${assembledPrinter.gain}`));
                     }else{
                         commandEvent.reply('Error: `assemble <printer> <casing> <printer>`');
                     }
